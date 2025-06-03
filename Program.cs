@@ -1,13 +1,14 @@
+﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using SupportTicketApi.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1) L�gg till AppDbContext med SQLite
+// 1) Lägg till AppDbContext med SQLite
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// 2) L�gg in CORS (om frontend senare k�rs p� annan host)
+// 2) Lägg in CORS (om frontend senare körs på annan host)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
@@ -16,19 +17,46 @@ builder.Services.AddCors(options =>
                         .AllowAnyMethod());
 });
 
-// 3) L�gg till controllers
+// 3) Lägg till controllers
 builder.Services.AddControllers();
 
-// 4) L�gg till Swagger/OpenAPI (valfritt, men underl�ttar test)
+// 4) Lägg till Swagger/OpenAPI (valfritt, men underlättar test)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Aktivera CORS�policy
+// 5) Globalt felhanterings‐middleware
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        context.Response.StatusCode = 500;
+        context.Response.ContentType = "application/json";
+
+        var exceptionHandlerFeature = context.Features.Get<IExceptionHandlerFeature>();
+        if (exceptionHandlerFeature != null)
+        {
+            var ex = exceptionHandlerFeature.Error;
+
+            // Här kan du logga ex (t.ex. via ILogger), om du vill:
+            // var logger = app.Services.GetRequiredService<ILogger<Program>>();
+            // logger.LogError(ex, "Ett oväntat fel inträffade");
+
+            // Skicka tillbaka en “friendly”‐version av felet:
+            await context.Response.WriteAsJsonAsync(new
+            {
+                error = "Ett internt serverfel har inträffat",
+                details = ex.Message // Du kan välja att dölja detaljer i produktionsläge
+            });
+        }
+    });
+});
+
+// Aktivera CORS–policy
 app.UseCors("AllowAll");
 
-// Aktivera Swagger (i Development-l�ge)
+// Aktivera Swagger (i Development-läge)
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
