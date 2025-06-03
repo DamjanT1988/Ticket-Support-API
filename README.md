@@ -193,10 +193,3 @@ En React-baserad frontend kan pekas mot API:t genom att sätta i React-projektet
 "proxy": "https://localhost:7207"
 ```
 Då räcker det att anropa `fetch("/api/tickets")` i React, och anropet proxas till .NET-backenden.
-
-## Utveckling och bidrag
-- Forka gärna detta repo och skicka pull requests för förbättringar eller nya funktioner.
-- Överväg att lägga till enhets- och integrationstester för controllers och tjänstelager.
-
-## Licens
-Detta projekt är licensierat under MIT License. Se filen `LICENSE` för mer information.
