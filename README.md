@@ -184,3 +184,13 @@ Om du utvecklar en React-frontend som anropar API:t på annan port (t.ex. 3000) 
 "proxy": "https://localhost:7207"
 ```
 Då proxas alla anrop från React till API:t.
+
+##XML-kommentarer (<summary>)
+
+Följande punkter förklarar varför vi använder <summary>-taggar i C#-koden:
+
+    Automatisk dokumentation: Verktyg som DocFX eller Sandcastle kan läsa XML-kommentarerna och generera en strukturerad referensdokumentation för API:et.
+
+    IntelliSense-stöd: När man hovrar över klasser, metoder eller egenskaper i Visual Studio/VS Code visas texten i <summary> som hjälptext, vilket underlättar förståelse utan att behöva läsa hela implementationen.
+
+    Standardpraxis: Genom att dokumentera publika klasser och metoder med XML-kommentarer blir koden mer underhållbar och enklare att använda för andra utvecklare.

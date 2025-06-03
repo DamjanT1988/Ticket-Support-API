@@ -39,10 +39,6 @@ app.UseExceptionHandler(errorApp =>
         {
             var ex = exceptionHandlerFeature.Error;
 
-            // Här kan du logga ex (t.ex. via ILogger), om du vill:
-            // var logger = app.Services.GetRequiredService<ILogger<Program>>();
-            // logger.LogError(ex, "Ett oväntat fel inträffade");
-
             // Skicka tillbaka en “friendly”‐version av felet:
             await context.Response.WriteAsJsonAsync(new
             {
