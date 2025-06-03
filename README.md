@@ -185,9 +185,9 @@ Om du utvecklar en React-frontend som anropar API:t på annan port (t.ex. 3000) 
 ```
 Då proxas alla anrop från React till API:t.
 
-##XML-kommentarer (<summary>)
+## XML-kommentarer (< summary >)
 
-Följande punkter förklarar varför vi använder <summary>-taggar i C#-koden:
+Följande punkter förklarar varför vi använder < summary >-taggar i C#-koden:
 
     Automatisk dokumentation: Verktyg som DocFX eller Sandcastle kan läsa XML-kommentarerna och generera en strukturerad referensdokumentation för API:et.
 
