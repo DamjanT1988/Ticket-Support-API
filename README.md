@@ -212,8 +212,11 @@ När vi byggde upp backend-API:t har vi gjort flera medvetna val för att säker
 ### 2. Tydlig Layering & Ansvarsuppdelning
 
 ├─ Controllers/ ← Tar emot HTTP-anrop, ansvarar för routing & statuskoder
+
 ├─ DTOs/ ← Dataöverföringsobjekt (in/ut)
+
 ├─ Models/ ← Domän­modell + valideringar (DataAnnotations)
+
 ├─ Data/ ← DbContext + migrations (EF Core)
 
 - **Fördelar**:  
