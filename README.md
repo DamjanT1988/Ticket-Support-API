@@ -1,7 +1,7 @@
 ﻿# TicketSupportAPI
 
 ## Beskrivning
-TicketSupportAPI är en ASP.NET Core Web API-lösning med enhetstester för att hantera support-ärenden (tickets) och kommentarer. Projektet använder SQLite som databas via Entity Framework Core och xUnit för enhetstester.
+TicketSupportAPI är en ASP.NET Core Web API-lösning med enhetstester för att hantera support-ärenden (tickets) och kommentarer. Projektet använder SQLite som databas via Entity Framework Core och xUnit för enhetstester. Det är ett kodtest.
 
 ## Förutsättningar
 - .NET 9 SDK installerad
@@ -194,3 +194,42 @@ Följande punkter förklarar varför vi använder < summary >-taggar i C#-koden:
     IntelliSense-stöd: När man hovrar över klasser, metoder eller egenskaper i Visual Studio/VS Code visas texten i <summary> som hjälptext, vilket underlättar förståelse utan att behöva läsa hela implementationen.
 
     Standardpraxis: Genom att dokumentera publika klasser och metoder med XML-kommentarer blir koden mer underhållbar och enklare att använda för andra utvecklare.
+
+## Design Decisions
+
+När vi byggde upp backend-API:t har vi gjort flera medvetna val för att säkerställa ett tydligt, testbart och underhållsbart system. Här är några av de viktigaste:
+
+### 1. Separation mellan Domänmodeller och Externa API-modeller (DTOs)
+- **Varför DTOs?**  
+  - Skyddar interna domänklasser från överexponering (över-/under-posting).  
+  - Ger full kontroll över exakt vilka fält som kan skickas in respektive returneras.  
+  - Förenklar versionering av API:t: vi kan ändra våra interna modeller utan att bryta klienter som använder DTO-kontraktet.  
+- **Hur?**  
+  - `CreateTicketDto`/`UpdateTicketDto` för inkommande data (write models).  
+  - `TicketReadDto`/`CommentReadDto` för utgående data (read models).  
+  - Manuell mappning (eller via AutoMapper) mellan DTOs och domänmodeller.
+
+### 2. Tydlig Layering & Ansvarsuppdelning
+
+├─ Controllers/ ← Tar emot HTTP-anrop, ansvarar för routing & statuskoder
+├─ DTOs/ ← Dataöverföringsobjekt (in/ut)
+├─ Models/ ← Domän­modell + valideringar (DataAnnotations)
+├─ Data/ ← DbContext + migrations (EF Core)
+
+- **Fördelar**:  
+  - Måttlig komplexitet i varje lager  
+  - Enklare att skriva enhetstester (t.ex. mocka DbContext i service-lagret)  
+  - Klar separation mellan affärslogik, datalager och presentation
+
+### 3. Entity Framework Core + SQLite
+- **Val av EF Core** för enkel definition av modeller, relationer och automatiska migrations.  
+- **SQLite** i utveckling för minimal setup (ingen extern databas krävs), men lätt att byta till t.ex. SQL Server i produktion.
+
+### 4. DataAnnotations & Automatisk Validering
+- Vi använder `[Required]`, `[StringLength]`, `[RegularExpression]` direkt på domänmodeller.  
+- **ModelState-kontroller** i controllers avslår felaktiga payloads med `400 Bad Request`.
+
+### 5. Middleware-pipeline & Felhantering
+- Globala felhandlers med `UseExceptionHandler` för enhetliga svar på otippade undantag.  
+- CORS-policy (`AllowAll`) för enkel integration med React-frontenden under utveckling.  
+- Swagger/OpenAPI aktiverat i utvecklingsläge för interaktiv dokumentation och test.
