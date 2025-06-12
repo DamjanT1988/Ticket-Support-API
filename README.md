@@ -186,7 +186,6 @@ Om du utvecklar en React-frontend som anropar API:t på annan port (t.ex. 3000) 
 Då proxas alla anrop från React till API:t.
 
 ## XML-kommentarer (< summary >)
-
 Följande punkter förklarar varför vi använder < summary >-taggar i C#-koden:
 
     Automatisk dokumentation: Verktyg som DocFX eller Sandcastle kan läsa XML-kommentarerna och generera en strukturerad referensdokumentation för API:et.
@@ -196,7 +195,6 @@ Följande punkter förklarar varför vi använder < summary >-taggar i C#-koden:
     Standardpraxis: Genom att dokumentera publika klasser och metoder med XML-kommentarer blir koden mer underhållbar och enklare att använda för andra utvecklare.
 
 ## Design Decisions
-
 När vi byggde upp backend-API:t har vi gjort flera medvetna val för att säkerställa ett tydligt, testbart och underhållsbart system. Här är några av de viktigaste:
 
 ### 1. Separation mellan Domänmodeller och Externa API-modeller (DTOs)
@@ -236,3 +234,24 @@ När vi byggde upp backend-API:t har vi gjort flera medvetna val för att säker
 - Globala felhandlers med `UseExceptionHandler` för enhetliga svar på otippade undantag.  
 - CORS-policy (`AllowAll`) för enkel integration med React-frontenden under utveckling.  
 - Swagger/OpenAPI aktiverat i utvecklingsläge för interaktiv dokumentation och test.
+
+## Möjliga förbättringar
+För att göra API:t ännu mer robust och produktionsklart kan du överväga:
+
+- **JWT-autentisering & auktorisering**  
+  Implementera `Microsoft.AspNetCore.Authentication.JwtBearer` för att utfärda och validera JSON Web Tokens. Märk känsliga endpoints med `[Authorize]` och skydda resurser baserat på användarroller.
+
+- **Paging & filtrering**  
+  Lägg till `page`/`pageSize`–parametrar och dynamisk LINQ-filtrering för att hantera stora datamängder effektivt.
+
+- **Caching**  
+  Använd t.ex. Redis eller in-memory cache via `IMemoryCache` för att snabba upp återkommande läs-operationer.
+
+- **Enhetstestning & CI/CD**  
+  Skriv xUnit-tester för controllers och data-lagret. Sätt upp GitHub Actions eller Azure DevOps-pipeline för automatisk bygg, test och distribution.
+
+- **Docker & miljöhantering**  
+  Dockerisera applikationen och använd `docker-compose` för att köra API, databas och eventuella beroenden lokalt eller i en Kubernetes-kluster.
+
+- **Observability**  
+  Lägg till strukturerad loggning med Serilog, health checks (`AddHealthChecks()`), samt metrics-export till Prometheus/Grafana.
